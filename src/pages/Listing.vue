@@ -76,43 +76,20 @@
           <v-toolbar>
             <v-toolbar-title>{{activeRegistrant.fullName}}</v-toolbar-title>
           </v-toolbar>
-          <v-list two-line>
-            <v-list-tile>
-              <v-list-tile-content>
-                <v-list-tile-title>Phone</v-list-tile-title>
-                <v-list-tile-sub-title>{{activeRegistrant.mobilePhone}}</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
-            <v-list-tile>
-              <v-list-tile-content>
-                <v-list-tile-title>Email</v-list-tile-title>
-                <v-list-tile-sub-title>{{activeRegistrant.email}}</v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
-          </v-list>
-          <v-list subheader>
-            <v-subheader>Status</v-subheader>
-            <v-list-tile>
-              <v-list-tile-action>
-                <v-checkbox v-model="activeRegistrant.registrationStatusIsContacted"></v-checkbox>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>Contacted</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-            <v-list-tile>
-              <v-list-tile-action>
-                </v-list-tile-title>
-                <v-checkbox v-model="activeRegistrant.registrationStatusIsConfirmed"></v-checkbox>
-              </v-list-tile-action>
-              <v-list-tile-content>
-                <v-list-tile-title>Confirmed</v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-          </v-list>
           <v-card-text>
-              <v-spacer></v-spacer>
-              <v-btn @click.native="showDetailDialog = false">Close</v-btn>
+            <div style="margin-bottom: 10px;">
+              <div style="font-weight: bold;">EMail</div>
+              <div style="color: rgba(0,0,0,0.54);"><a :href="'mailto:' + activeRegistrant.email">{{activeRegistrant.email}}</a></div>
+            </div>
+            <div>
+              <div style="font-weight: bold;">Phone</div>
+              <div style="color: rgba(0,0,0,0.54);">{{activeRegistrant.mobilePhone}}</div>
+            </div>
+            <v-spacer></v-spacer>
+            <v-checkbox v-model="activeRegistrant.registrationStatusIsContacted" label="Contacted"></v-checkbox>
+            <v-checkbox v-model="activeRegistrant.registrationStatusIsConfirmed" label="Confirmed"></v-checkbox>
+            <v-spacer></v-spacer>
+            <v-btn @click.native="showDetailDialog = false">Close</v-btn>
           </v-card-text>
         </v-card>
       </v-dialog>
