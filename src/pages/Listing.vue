@@ -59,7 +59,8 @@
         <!-- <td @click.stop="editRow(props.item)" style="cursor:pointer;">{{ props.item.fullName }}</td> -->
         <td @click.stop="editRow(props.item)"
           style="cursor:pointer;"
-          class="blue--text">
+          class="blue--text"
+          v-tooltip:top="{ html: `${props.item.organizationName}\n${props.item.organizationJobTitle}` }">
             {{ props.item.fullName }}
         </td>
         <td>{{ props.item.fullRegistrationType }}</td>
