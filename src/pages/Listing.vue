@@ -1,5 +1,6 @@
 <template>
   <div>
+    <registrant-detail :registrant="activeRegistrant"></registrant-detail>
     <v-container class="elevation-1" fluid>
       <v-layout row wrap>
         <v-flex xs12 sm4 md4>
@@ -244,6 +245,8 @@
         activeRegistrant: {
           mobilePhone: '',
           email: '',
+          arrivalDate: '',
+          departureDate: '',
           registrationStatusIsContacted: false,
           registrationStatusIsConfirmed: false,
         },
@@ -336,6 +339,7 @@
           });
         }
         this.filterRegistrants();
+        this.activeRegistrant = registrants[0];
       });
     },
     methods: {
