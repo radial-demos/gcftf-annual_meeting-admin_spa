@@ -1,5 +1,6 @@
 <template>
   <div>
+    <notes-dialog v-model="showNotesDialog" :registrant="activeRegistrant"></notes-dialog>
     <v-layout row justify-center>
       <registrant-detail v-model="showDetailDialog" :registrant="activeRegistrant"></registrant-detail>
     </v-layout>
@@ -86,11 +87,15 @@
             local_dining
           </v-icon>
         </td>
-        <td v-if="props.item.notes" v-tooltip:top="{ html: props.item.notes }">
-          <v-icon :class="getIconClass(props.item.notes)">description</v-icon>
-        </td>
-        <td v-else>
-          <v-icon :class="getIconClass(props.item.notes)">description</v-icon>
+        <td>
+          <v-btn v-if="props.item.notes" icon @click.native.stop="editNotes(props.item)" :class="getIconClass(props.item.notes)"
+            v-tooltip:left="{ html: props.item.notes }"
+          >
+            <v-icon>description</v-icon>
+          </v-btn>
+          <v-btn v-else icon @click.native.stop="editNotes(props.item)" :class="getIconClass(props.item.notes)">
+            <v-icon>description</v-icon>
+          </v-btn>
         </td>
       </template>
     </v-data-table>
@@ -125,7 +130,9 @@
     'roomingPreference',
     'lang',
     'registrationStatusIsContacted',
-    'registrationStatusIsConfirmed'];
+    'registrationStatusIsConfirmed',
+    'registrationStatusIsCompensated',
+    'notes'];
 
   function GQL(portArg, hostnameArg, pathArg) {
     function callQuery(nameArg, fieldsArg, callback) {
@@ -249,6 +256,7 @@
           registrationStatusIsConfirmed: false,
         },
         showDetailDialog: false,
+        showNotesDialog: false,
         headers: [
           {
             text: 'Date',
@@ -350,6 +358,10 @@
       },
       getRoomingPreferenceIcon(value) {
         return (value === 'nonSmoking') ? 'smoke_free' : 'smoking_rooms';
+      },
+      editNotes(item) {
+        this.activeRegistrant = item;
+        this.showNotesDialog = true;
       },
       editRow(item) {
         this.activeRegistrant = item;
