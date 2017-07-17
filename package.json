@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "validator": "^7.0.0",
-    "vue": "^2.2.1",
-    "vuetify": "^0.12.0"
+    "vue": "^2.4.0",
+    "vuetify": "^0.14.1"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.2",
