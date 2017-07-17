@@ -1,6 +1,8 @@
 <template>
   <div>
-    <registrant-detail :registrant="activeRegistrant"></registrant-detail>
+    <v-layout row justify-center>
+      <registrant-detail v-model="showDetailDialog" :registrant="activeRegistrant"></registrant-detail>
+    </v-layout>
     <v-container class="elevation-1" fluid>
       <v-layout row wrap>
         <v-flex xs12 sm4 md4>
@@ -64,38 +66,34 @@
           v-tooltip:top="{ html: `${props.item.organizationName}\n${props.item.organizationJobTitle}` }">
             {{ props.item.fullName }}
         </td>
+        <td><v-icon :class="getIconClass(props.item.isGCF)">star</v-icon></td>
         <td>{{ props.item.fullRegistrationType }}</td>
-        <td><v-icon v-if="props.item.isGCF" class="green--text">check</v-icon></td>
-        <td><v-icon v-if="props.item.registrationStatusIsContacted" class="green--text">person_outline</v-icon></td>
-        <td><v-icon v-if="props.item.registrationStatusIsConfirmed" class="green--text">person</v-icon></td>
+        <td>
+          <v-icon :class="getIconClass(props.item.registrationStatusIsContacted)">call_made</v-icon>
+          <v-icon :class="getIconClass(props.item.registrationStatusIsConfirmed)">event_available</v-icon>
+          <v-icon :class="getIconClass(false)">attach_money</v-icon>
+        </td>
         <td>{{ props.item.country }}</td>
         <td>{{ props.item.state }}</td>
+        <td>
+          <v-icon :class="getIconClass(props.item.roomingPreference)">{{getRoomingPreferenceIcon(props.item.roomingPreference)}}</v-icon>
+          <v-icon v-if="props.item.dietaryRestrictions"
+            :class="getIconClass(props.item.dietaryRestrictions)">
+            local_dining
+          </v-icon>
+          <v-icon v-else
+            :class="getIconClass(props.item.dietaryRestrictions)">
+            local_dining
+          </v-icon>
+        </td>
+        <td v-if="props.item.notes" v-tooltip:top="{ html: props.item.notes }">
+          <v-icon :class="getIconClass(props.item.notes)">description</v-icon>
+        </td>
+        <td v-else>
+          <v-icon :class="getIconClass(props.item.notes)">description</v-icon>
+        </td>
       </template>
     </v-data-table>
-    <v-layout row justify-center>
-      <v-dialog v-model="showDetailDialog" width="600px">
-        <v-card>
-          <v-toolbar>
-            <v-toolbar-title>{{activeRegistrant.fullName}}</v-toolbar-title>
-          </v-toolbar>
-          <v-card-text>
-            <div style="margin-bottom: 10px;">
-              <div style="font-weight: bold;">EMail</div>
-              <div style="color: rgba(0,0,0,0.54);"><a :href="'mailto:' + activeRegistrant.email">{{activeRegistrant.email}}</a></div>
-            </div>
-            <div>
-              <div style="font-weight: bold;">Phone</div>
-              <div style="color: rgba(0,0,0,0.54);">{{activeRegistrant.mobilePhone}}</div>
-            </div>
-            <v-spacer></v-spacer>
-            <v-checkbox v-model="activeRegistrant.registrationStatusIsContacted" label="Contacted"></v-checkbox>
-            <v-checkbox v-model="activeRegistrant.registrationStatusIsConfirmed" label="Confirmed"></v-checkbox>
-            <v-spacer></v-spacer>
-            <v-btn @click.native="showDetailDialog = false">Close</v-btn>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-    </v-layout>
   </div>
 </template>
 <script>
@@ -265,28 +263,21 @@
             value: 'fullName',
           },
           {
+            text: 'D/G',
+            left: true,
+            sortable: true,
+            value: 'isGCF',
+          },
+          {
             text: 'Registration Type',
             left: true,
             sortable: true,
             value: 'registrationType',
           },
           {
-            text: 'GCF',
+            text: 'Registration Status',
             left: true,
-            sortable: true,
-            value: 'isGCF',
-          },
-          {
-            text: 'Cont',
-            left: true,
-            sortable: true,
-            value: 'registrationStatusIsContacted',
-          },
-          {
-            text: 'Conf',
-            left: true,
-            sortable: true,
-            value: 'registrationStatusIsConfirmed',
+            sortable: false,
           },
           {
             text: 'Country',
@@ -299,6 +290,16 @@
             left: true,
             sortable: true,
             value: 'state',
+          },
+          {
+            text: 'Rooming/Diet',
+            left: true,
+            sortable: false,
+          },
+          {
+            text: 'Notes',
+            left: true,
+            sortable: false,
           },
         ],
       };
@@ -335,14 +336,21 @@
             registrant.isGCF = getIsGCF(registrant.registrationType);
             registrant.countryAndState = `${registrant.country.trim()} - ${registrant.state.trim()}`;
             registrant.dateOfCreation = getDateOnly(registrant.timeOfCreation);
+            registrant.notes = registrant.notes || '';
             return registrant;
           });
         }
         this.filterRegistrants();
-        this.activeRegistrant = registrants[0];
+        this.activeRegistrant = registrants[8];
       });
     },
     methods: {
+      getIconClass(value) {
+        return (value) ? 'green--text text--darken-2' : 'grey--text text--lighten-2';
+      },
+      getRoomingPreferenceIcon(value) {
+        return (value === 'nonSmoking') ? 'smoke_free' : 'smoking_rooms';
+      },
       editRow(item) {
         this.activeRegistrant = item;
         this.showDetailDialog = true;
