@@ -88,6 +88,12 @@ const api = GQL(PORT, HOSTNAME, PATH);
 
 export default {
   methods: {
+    updateRegistrationStatusFlags(data, cb) {
+      api.callMutation('updateRegistrationStatusFlags', data, (err, resp) => {
+        if (err) return cb(err, resp);
+        return cb(undefined, resp);
+      });
+    },
     updateNotes(data, cb) {
       api.callMutation('updateNotes', data, (err, resp) => {
         if (err) return cb(err, resp);
