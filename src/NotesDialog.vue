@@ -61,11 +61,9 @@
             console.log(err);
             return;
           }
-          console.log(resp);
           this.registrant.notes = this.notes;
           this.isActive = false;
         });
-        // console.log(this.notes);
       }
     },
   };
