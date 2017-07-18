@@ -70,9 +70,15 @@
         <td><v-icon :class="getIconClass(props.item.isGCF)">star</v-icon></td>
         <td>{{ props.item.fullRegistrationType }}</td>
         <td>
-          <v-icon :class="getIconClass(props.item.registrationStatusIsContacted)">call_made</v-icon>
-          <v-icon :class="getIconClass(props.item.registrationStatusIsConfirmed)">event_available</v-icon>
-          <v-icon :class="getIconClass(false)">attach_money</v-icon>
+          <v-btn style="margin:0;" small icon :class="getIconClass(props.item.registrationStatusFlags, 'contacted')" @click.native.stop="toggleRegistrationStatus(props.item, 'contacted')">
+            <v-icon >call_made</v-icon>
+          </v-btn>
+          <v-btn style="margin:0;" small icon :class="getIconClass(props.item.registrationStatusFlags, 'confirmed')" @click.native.stop="toggleRegistrationStatus(props.item, 'confirmed')">
+            <v-icon >event_available</v-icon>
+          </v-btn>
+          <v-btn style="margin:0;" small icon :class="getIconClass(props.item.registrationStatusFlags, 'compensated')" @click.native.stop="toggleRegistrationStatus(props.item, 'compensated')">
+            <v-icon>attach_money</v-icon>
+          </v-btn>
         </td>
         <td>{{ props.item.country }}</td>
         <td>{{ props.item.state }}</td>
@@ -129,9 +135,7 @@
     'dietaryRestrictions',
     'roomingPreference',
     'lang',
-    'registrationStatusIsContacted',
-    'registrationStatusIsConfirmed',
-    'registrationStatusIsCompensated',
+    'registrationStatusFlags',
     'notes'];
 
   function GQL(portArg, hostnameArg, pathArg) {
@@ -313,23 +317,20 @@
       };
     },
     watch: {
-      'activeRegistrant.registrationStatusIsContacted': function registrationStatusIsContacted(arg) {
-        if (!this.activeRegistrant.uuid) return;
-        api.callMutation('updateRegistrationStatusFlag', { uuid: this.activeRegistrant.uuid, flag: 'contacted', value: arg }, (err, resp) => {
-          if (err) return;
-          this.filterRegistrants();
-          // console.log(resp.data);
-          // if (!data.data !! !data.data[functionName]) return;
-        });
-      },
-      'activeRegistrant.registrationStatusIsConfirmed': function registrationStatusIsConfirmed(arg) {
-        if (!this.activeRegistrant.uuid) return;
-        api.callMutation('updateRegistrationStatusFlag', { uuid: this.activeRegistrant.uuid, flag: 'confirmed', value: arg }, (err, resp) => {
-          if (err) return;
-          this.filterRegistrants();
-          // console.log(resp.data);
-        });
-      },
+      // 'activeRegistrant.registrationStatusIsContacted': function registrationStatusIsContacted(arg) {
+      //   if (!this.activeRegistrant.uuid) return;
+      //   api.callMutation('updateRegistrationStatusFlag', { uuid: this.activeRegistrant.uuid, flag: 'contacted', value: arg }, (err, resp) => {
+      //     if (err) return;
+      //     this.filterRegistrants();
+      //   });
+      // },
+      // 'activeRegistrant.registrationStatusIsConfirmed': function registrationStatusIsConfirmed(arg) {
+      //   if (!this.activeRegistrant.uuid) return;
+      //   api.callMutation('updateRegistrationStatusFlag', { uuid: this.activeRegistrant.uuid, flag: 'confirmed', value: arg }, (err, resp) => {
+      //     if (err) return;
+      //     this.filterRegistrants();
+      //   });
+      // },
     },
     created() {
       registrants = [];
@@ -353,11 +354,27 @@
       });
     },
     methods: {
-      getIconClass(value) {
-        return (value) ? 'green--text text--darken-2' : 'grey--text text--lighten-2';
+      getIconClass(value, flag) {
+        const activeStyle = 'green--text text--darken-2';
+        const inactiveStyle = 'grey--text text--lighten-2';
+        if (Array.isArray(value) && flag) return value.includes(flag) ? activeStyle : inactiveStyle;
+        return (value) ? activeStyle : inactiveStyle;
       },
       getRoomingPreferenceIcon(value) {
         return (value === 'nonSmoking') ? 'smoke_free' : 'smoking_rooms';
+      },
+      toggleRegistrationStatus(item, flag) {
+        const registrationStatusFlags = Object.assign([], item.registrationStatusFlags);
+        const flagIndex = registrationStatusFlags.indexOf(flag);
+        if (flagIndex === -1) registrationStatusFlags.push(flag);
+        else registrationStatusFlags.splice(flagIndex, 1);
+        this.updateRegistrationStatusFlags({ uuid: item.uuid, registrationStatusFlags }, (err, resp) => {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          item.registrationStatusFlags = registrationStatusFlags;
+        });
       },
       editNotes(item) {
         this.activeRegistrant = item;
