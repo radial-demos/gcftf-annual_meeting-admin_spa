@@ -1,8 +1,13 @@
 {
-  "name": "annual_meeting",
-  "description": "GCF Annual Meeting registration form using Vue.js",
+  "name": "gcftf-annual_meeting-admin_spa",
+  "description": "Single page application (SPA) for managing registrants to the 2017 GCF Annual Meeting",
   "version": "1.0.0",
   "author": "Darren Anderson <dranders@colorado.edu>",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/radial-demos/gcftf-annual_meeting-admin_spa"
+  },
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
